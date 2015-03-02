@@ -56,27 +56,49 @@ public class Heap {
 
     public int heapExtractMax() {
         int max = maxElement();
-        heap = Arrays.copyOfRange(heap, 1, heapSize());
-        buildMaxHeap();
+        heap[0] = heap[heapSize() - 1];
+        heap = Arrays.copyOfRange(heap, 0, heapSize() - 1);
+        maxHeapify(0);
         return max;
     }
 
     public int heapExtractMin() {
         int min = minElement();
-        heap = Arrays.copyOfRange(heap, 1, heapSize());
-        buildMinHeap();
+        heap[0] = heap[heapSize() - 1];
+        heap = Arrays.copyOfRange(heap, 0, heapSize() - 1);
+        minHeapify(0);
         return min;
     }
 
     public void insert(int x) {
-        heap = Arrays.copyOf(this.heap, heapSize() + 1);
-        heap[heapSize() - 1] = x;
         if (isMaxHeap()) {
-            buildMaxHeap();
+            maxHeapInsert(x);
         } else {
-            buildMinHeap();
+            minHeapInsert(x);
         }
     }
+
+    private void maxHeapInsert(int x) {
+        heap = Arrays.copyOf(heap, heap.length + 1);
+        int i = heapSize() - 1;
+        heap[i] = x;
+        while (i > 0 && heap[parent(i)] < heap[i]){
+            swap(parent(i), i);
+            i = parent(i);
+        }
+    }
+
+    private void minHeapInsert(int x) {
+        heap = Arrays.copyOf(heap, heap.length + 1);
+        int i = heapSize() - 1;
+        heap[i] = x;
+        while (i > 0 && heap[parent(i)] > heap[i]){
+            swap(parent(i), i);
+            i = parent(i);
+        }
+    }
+
+
 
     public void buildMaxHeap() {
         if (heapSize() == 1) {
@@ -148,15 +170,21 @@ public class Heap {
     }
 
     private int parent(int index) {
-        return index / 2;
+        return (index - 1) / 2;
     }
 
     private int left(int index) {
-        return index * 2;
+        if (index == 0) {
+            return 1;
+        }
+        return index * 2 + 1;
     }
 
     private int right(int index) {
-        return index * 2 + 1;
+        if (index == 0) {
+            return 2;
+        }
+        return index * 2 + 2;
     }
 
 
